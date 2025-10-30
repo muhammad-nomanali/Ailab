@@ -3,6 +3,9 @@ import { supabase } from "../supabaseclient";
 import { motion, AnimatePresence } from "framer-motion";
 import Line from "../assets/Line.png";
 
+// Suppress ESLint warning for motion
+/* eslint-disable no-unused-vars */
+
 export default function Lab2() {
   const [equipments, setEquipments] = useState([]);
   const [loading, setLoading] = useState(true);

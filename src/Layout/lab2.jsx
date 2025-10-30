@@ -25,7 +25,6 @@ export default function Lab2() {
   useEffect(() => {
     fetchEquipments();
 
-    // ✅ Realtime updates
     const channel = supabase
       .channel("realtime-posts")
       .on(
@@ -36,14 +35,10 @@ export default function Lab2() {
             setEquipments((prev) => [payload.new, ...prev]);
           } else if (payload.eventType === "UPDATE") {
             setEquipments((prev) =>
-              prev.map((item) =>
-                item.id === payload.new.id ? payload.new : item
-              )
+              prev.map((item) => (item.id === payload.new.id ? payload.new : item))
             );
           } else if (payload.eventType === "DELETE") {
-            setEquipments((prev) =>
-              prev.filter((item) => item.id !== payload.old.id)
-            );
+            setEquipments((prev) => prev.filter((item) => item.id !== payload.old.id));
           }
         }
       )
@@ -55,98 +50,222 @@ export default function Lab2() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
-      {/* 🧭 Header */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-200/30 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+      </div>
+
       <motion.header
-        initial={{ opacity: 0, y: -30 }}
+        initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7 }}
-        className="bg-[#003a70] text-white py-10 text-center shadow-lg"
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="relative bg-gradient-to-r from-[#003a70] via-[#0052a3] to-[#003a70] text-white py-16 text-center shadow-2xl overflow-hidden"
       >
-        <h1 className="text-4xl font-extrabold tracking-tight">
-          Lab Equipments Gallery
-        </h1>
-        <p className="text-blue-100 text-sm mt-2">
-          View all lab equipment uploaded by your team
-        </p>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjA1IiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-20"></div>
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+          className="relative z-10"
+        >
+          <h1 className="text-5xl md:text-6xl font-black tracking-tight mb-3 bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-100">
+            Lab Equipment Gallery
+          </h1>
+          <p className="text-blue-100 text-base md:text-lg font-light tracking-wide">
+            Explore cutting-edge laboratory equipment at your fingertips
+          </p>
+        </motion.div>
       </motion.header>
 
-      {/* Divider */}
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.6 }}
-        className="flex justify-center mt-6"
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
+        className="flex justify-center mt-8"
       >
-        <img src={Line} alt="divider" className="w-40 opacity-80" />
+        <img src={Line} alt="divider" className="w-48 opacity-70" />
       </motion.div>
 
-      {/* 📦 Equipment Section */}
-      <section className="p-6 max-w-6xl mx-auto">
+      <section className="p-6 max-w-5xl mx-auto relative z-10">
         {loading ? (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center text-gray-500 mt-20"
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            className="flex flex-col items-center justify-center mt-32"
           >
-            Loading equipments...
-          </motion.p>
+            <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+            <p className="text-gray-500 mt-6 text-lg font-medium">Loading equipment...</p>
+          </motion.div>
         ) : equipments.length === 0 ? (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center text-gray-500 mt-20"
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center mt-32 bg-white/60 backdrop-blur-sm rounded-2xl p-12 shadow-lg"
           >
-            No equipments found. Upload one to get started!
-          </motion.p>
+            <div className="text-6xl mb-4">🔬</div>
+            <p className="text-gray-600 text-xl font-semibold">No equipment found</p>
+            <p className="text-gray-400 mt-2">Upload your first piece of equipment to get started!</p>
+          </motion.div>
         ) : (
           <motion.div
-            className="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mt-10"
+            className="flex flex-col gap-8 mt-10"
             initial="hidden"
             animate="visible"
-            variants={{
-              hidden: { opacity: 0 },
-              visible: {
-                opacity: 1,
-                transition: { staggerChildren: 0.1 },
-              },
+            variants={{ 
+              hidden: { opacity: 0 }, 
+              visible: { 
+                opacity: 1, 
+                transition: { staggerChildren: 0.1 } 
+              } 
             }}
           >
-            {equipments.map((item, ) => (
+            {equipments.map((item, index) => (
               <motion.div
                 key={item.id}
-                variants={{
-                  hidden: { opacity: 0, y: 40 },
-                  visible: { opacity: 1, y: 0 },
+                variants={{ 
+                  hidden: { opacity: 0, x: -50, rotateY: -15 }, 
+                  visible: { opacity: 1, x: 0, rotateY: 0 } 
                 }}
-                whileHover={{ scale: 1.03 }}
-                transition={{ type: "spring", stiffness: 200 }}
-                className="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300"
+                whileHover={{ 
+                  scale: 1.02, 
+                  y: -8,
+                  transition: { type: "spring", stiffness: 300, damping: 20 }
+                }}
+                className="group relative flex flex-col md:flex-row bg-white/80 backdrop-blur-xl border border-white/60 rounded-3xl shadow-xl hover:shadow-2xl overflow-hidden transition-all duration-500"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%)'
+                }}
               >
-                {item.image_url ? (
-                  <motion.img
-                    src={item.image_url}
-                    alt={item.content || "Equipment"}
-                    loading="lazy"
-                    className="w-full h-52 object-cover transition-transform duration-300 hover:scale-105"
-                  />
-                ) : (
-                  <div className="w-full h-52 bg-gray-100 flex items-center justify-center text-gray-400">
-                    No Image
-                  </div>
-                )}
+                {/* Gradient overlay on hover */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/0 via-indigo-500/0 to-purple-500/0 group-hover:from-blue-500/5 group-hover:via-indigo-500/5 group-hover:to-purple-500/5 transition-all duration-500 pointer-events-none"></div>
+                
+                {/* Image Section */}
+                <div className="md:w-2/5 w-full h-64 md:h-auto overflow-hidden flex-shrink-0 relative">
+                  {item.image_url ? (
+                    <>
+                      <motion.img
+                        src={item.image_url}
+                        alt={item.content || "Equipment"}
+                        loading="lazy"
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    </>
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="text-6xl mb-2">📷</div>
+                        <span className="text-gray-400 text-sm font-medium">No Image</span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Index badge */}
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: index * 0.1 + 0.5, type: "spring", stiffness: 200 }}
+                    className="absolute top-4 left-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg font-bold text-blue-600 text-sm"
+                  >
+                    {index + 1}
+                  </motion.div>
+                </div>
 
-                <div className="p-4">
-                  <p className="text-gray-800 text-sm leading-relaxed">
-                    {item.content || "No description available."}
-                  </p>
-                  <p className="text-xs text-gray-400 mt-3">
-                    📅{" "}
-                    {new Date(item.created_at).toLocaleString("en-US", {
-                      dateStyle: "medium",
-                      timeStyle: "short",
-                    })}
-                  </p>
+                {/* Content Section */}
+                <div className="md:w-3/5 w-full p-7 md:p-8 flex flex-col justify-between relative z-10">
+                  <div>
+                    <div className="flex items-start justify-between gap-4 mb-4">
+                      <div className="flex-1">
+                        <motion.h2 
+                          className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 group-hover:text-blue-700 transition-colors duration-300"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 + 0.3 }}
+                        >
+                          {item.name || "Unnamed Equipment"}
+                        </motion.h2>
+                        <motion.div 
+                          className="flex items-center gap-2 text-xs text-gray-400"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: index * 0.1 + 0.4 }}
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span>
+                            {item.created_at
+                              ? new Date(item.created_at).toLocaleString("en-US", {
+                                  dateStyle: "medium",
+                                  timeStyle: "short",
+                                })
+                              : "—"}
+                          </span>
+                        </motion.div>
+                      </div>
+
+                      {/* Status badge */}
+                      <motion.div
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ delay: index * 0.1 + 0.5, type: "spring", stiffness: 200 }}
+                        className="hidden md:block"
+                      >
+                        <span
+                          className={`px-4 py-2 rounded-full text-xs font-bold shadow-lg backdrop-blur-sm flex items-center gap-2 ${
+                            item.status === "Available"
+                              ? "bg-gradient-to-r from-green-400 to-emerald-500 text-white"
+                              : item.status === "Not Available"
+                              ? "bg-gradient-to-r from-red-400 to-rose-500 text-white"
+                              : "bg-gradient-to-r from-blue-400 to-indigo-500 text-white"
+                          }`}
+                        >
+                          <span className={`w-2 h-2 rounded-full ${
+                            item.status === "Available" ? "bg-white animate-pulse" : "bg-white/70"
+                          }`}></span>
+                          {item.status || "Unknown"}
+                        </span>
+                      </motion.div>
+                    </div>
+
+                    {/* Description */}
+                    <motion.p 
+                      className="text-gray-600 text-sm md:text-base leading-relaxed mt-4"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: index * 0.1 + 0.6 }}
+                    >
+                      {item.content || "No description available."}
+                    </motion.p>
+                  </div>
+
+                  {/* Mobile status */}
+                  <div className="mt-6 flex items-center justify-between gap-3 md:hidden">
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: index * 0.1 + 0.7, type: "spring" }}
+                      className={`px-4 py-2 rounded-full text-xs font-bold shadow-md flex items-center gap-2 ${
+                        item.status === "Available"
+                          ? "bg-gradient-to-r from-green-400 to-emerald-500 text-white"
+                          : item.status === "Not Available"
+                          ? "bg-gradient-to-r from-red-400 to-rose-500 text-white"
+                          : "bg-gradient-to-r from-blue-400 to-indigo-500 text-white"
+                      }`}
+                    >
+                      <span className={`w-2 h-2 rounded-full ${
+                        item.status === "Available" ? "bg-white animate-pulse" : "bg-white/70"
+                      }`}></span>
+                      {item.status || "Unknown"}
+                    </motion.span>
+                  </div>
+
+                  {/* Decorative corner element */}
+                  <div className="absolute bottom-0 right-0 w-24 h-24 bg-gradient-to-tl from-blue-100/40 to-transparent rounded-tl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 </div>
               </motion.div>
             ))}
@@ -154,14 +273,16 @@ export default function Lab2() {
         )}
       </section>
 
-      {/* 🌙 Footer */}
       <motion.footer
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="text-center py-6 bg-gray-100 text-sm text-gray-500 mt-12"
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.2, duration: 0.8 }}
+        className="relative text-center py-10 bg-gradient-to-r from-gray-50 to-slate-100 text-sm text-gray-500 mt-20 border-t border-gray-200"
       >
-        © {new Date().getFullYear()} Lab Management System — All rights reserved.
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImRvdHMiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiMwMDAwMDAiIG9wYWNpdHk9IjAuMDUiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZG90cykiLz48L3N2Zz4=')] opacity-50"></div>
+        <p className="relative z-10 font-medium">
+          © {new Date().getFullYear()} Lab Management System — Powered by Innovation
+        </p>
       </motion.footer>
     </div>
   );

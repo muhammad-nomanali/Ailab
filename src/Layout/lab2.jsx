@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "../supabaseclient";
 import { motion, AnimatePresence } from "framer-motion";
 import Line from "../assets/Line.png";
@@ -257,9 +258,14 @@ export default function Lab2() {
                       {/* Description */}
                       <div className="relative">
                         <div className="absolute -left-3 top-0 w-1 h-full bg-gradient-to-b from-blue-500 to-purple-500 rounded-full" />
-                        <p className="text-gray-600 text-sm leading-relaxed pl-4">
-                          {item.content || "No description available."}
-                        </p>
+                       <p className="text-gray-600 text-sm leading-relaxed pl-4">
+  {item.content
+    ? item.content.split(" ").length > 30
+      ? item.content.split(" ").slice(0, 30).join(" ") + "..."
+      : item.content
+    : "No description available."}
+</p>
+
                       </div>
                     </div>
 
@@ -288,10 +294,17 @@ export default function Lab2() {
                         whileHover={{ x: 5 }}
                         className="text-blue-600 font-semibold text-sm cursor-pointer flex items-center gap-1"
                       >
-                        View Details
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
+                     <Link to={`/equipment/${item.id}`}>
+  <motion.div className="text-blue-600 font-semibold text-sm cursor-pointer flex items-center gap-1">
+    View Details
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+    </svg>
+  </motion.div>
+</Link>
+
+
+                        
                       </motion.div>
                     </motion.div>
                   </div>
